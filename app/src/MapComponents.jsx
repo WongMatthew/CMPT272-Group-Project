@@ -330,6 +330,7 @@ const MapComponent = () => {
   const [sortBy, setSortBy] = useState("timestamp");
   const [highlightedReport, setHighlightedReport] = useState(null); // Tracks highlighted report
   const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
+  const [initialReportData, setInitialReportData] = useState(null); // Resets modal data
   const markerRefs = useRef({}); // Reference to marker popups
   const [isPasscodeModalOpen, setIsPasscodeModalOpen] = useState(false); // Controls passcode modal visibility
 
@@ -339,6 +340,19 @@ const MapComponent = () => {
       raw: now.toISOString(),
       display: now.toLocaleString(),
     };
+  };
+
+  const handleAddReport = () => {
+    setInitialReportData({
+      locationName: "",
+      reporterName: "",
+      reporterPhone: "",
+      emergencyInfo: "",
+      imageUrl: "",
+      comments: "",
+      coords: { lat: "", lng: "" },
+    });
+    setIsModalOpen(true); // Open modal
   };
 
   const handleReportSubmit = (report) => {
@@ -476,10 +490,7 @@ const MapComponent = () => {
       >
         <h3>Emergency List</h3>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="add-report-button"
-        >
+        <button onClick={handleAddReport} className="add-report-button">
           Add Report
         </button>
 
@@ -495,6 +506,7 @@ const MapComponent = () => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleReportSubmit}
+          initialData={initialReportData}
         />
 
         <br />

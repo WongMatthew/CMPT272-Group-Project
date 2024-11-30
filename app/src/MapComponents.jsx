@@ -306,6 +306,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import ReportFormModal from "./ReportFormModal";
+import PasscodeModal from "./PasscodeModal";
 
 // Fixing Leaflet's default icon paths for React
 import markerIcon from "./locationPin.png";
@@ -330,6 +331,7 @@ const MapComponent = () => {
   const [highlightedReport, setHighlightedReport] = useState(null); // Tracks highlighted report
   const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
   const markerRefs = useRef({}); // Reference to marker popups
+  const [isPasscodeModalOpen, setIsPasscodeModalOpen] = useState(false); // Controls passcode modal visibility
 
   const generateTimestamp = () => {
     const now = new Date();
@@ -395,6 +397,10 @@ const MapComponent = () => {
     } else {
       alert("This report does not have associated coordinates.");
     }
+  };
+  
+  const handleDeleteReport = (idx) => {
+
   };
 
   return (
@@ -477,6 +483,14 @@ const MapComponent = () => {
           Add Report
         </button>
 
+        <button
+          onClick={() => setIsPasscodeModalOpen(true)}
+          className="add-report-button"
+        >
+          test passcode
+        </button>
+
+
         <ReportFormModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -519,9 +533,14 @@ const MapComponent = () => {
               <br />
               <b>Status:</b> {report.status}
               {!report.coords && <p>(No coordinates provided)</p>}
+              <br />
+              <button onClick={() => handleDeleteReport(idx)}>DELETE</button>
             </li>
           ))}
         </ul>
+        <PasscodeModal 
+          isOpen = {isPasscodeModalOpen}
+        />
       </div>
     </div>
   );

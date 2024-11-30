@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const ReportFormModal = ({ isOpen, onClose, onSubmit }) => {
+const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [locationName, setLocationName] = useState("");
   const [reporterName, setReporterName] = useState("");
   const [reporterPhone, setReporterPhone] = useState("");
@@ -8,6 +8,18 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [comments, setComments] = useState("");
   const [coords, setCoords] = useState({ lat: "", lng: "" });
+
+  useEffect(() => {
+    if (initialData) {
+      setLocationName(initialData.locationName || "");
+      setReporterName(initialData.reporterName || "");
+      setReporterPhone(initialData.reporterPhone || "");
+      setEmergencyInfo(initialData.emergencyInfo || "");
+      setImageUrl(initialData.imageUrl || "");
+      setComments(initialData.comments || "");
+      setCoords(initialData.coords || { lat: "", lng: "" });
+    }
+  }, [initialData]);
 
   const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 
@@ -107,7 +119,12 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit }) => {
           <input
             type="text"
             value={coords.lat}
-            onChange={(e) => setCoords({ ...coords, lat: e.target.value })}
+            onChange={(e) =>
+              setCoords((prevCoords) => ({
+                ...prevCoords,
+                lat: e.target.value,
+              }))
+            }
           />
         </div>
         <div>
@@ -115,7 +132,12 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit }) => {
           <input
             type="text"
             value={coords.lng}
-            onChange={(e) => setCoords({ ...coords, lng: e.target.value })}
+            onChange={(e) =>
+              setCoords((prevCoords) => ({
+                ...prevCoords,
+                lng: e.target.value,
+              }))
+            }
           />
         </div>
         <button onClick={handleSubmit}>Submit</button>

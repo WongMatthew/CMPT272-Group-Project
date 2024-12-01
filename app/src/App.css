@@ -114,16 +114,22 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background: white;
+  width: 500px; /* Set a fixed width */
+  height: 850px; /* Set a fixed height */
   padding: 20px;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  overflow: hidden; /* Prevent content from expanding the modal */
+  border-radius: 8px; /* Optional: Rounded corners */
 }
 
 .modal-content {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  max-height: 100%;
+  overflow-y: auto; /* Enable scrolling within the modal */
 }
 
 .modal-content label {
@@ -143,4 +149,11 @@ body {
   padding: 10px;
   font-size: 1rem;
   cursor: pointer;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  min-height: 20px;
 }

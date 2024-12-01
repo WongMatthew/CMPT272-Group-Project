@@ -300,8 +300,8 @@ const MapComponent = () => {
               <b>Status:</b> {report.status}
               {!report.coords && <p>(No coordinates provided)</p>}
               <br />
-              <button onClick={() => handleDeleteReport(idx)}>DELETE</button>
-              <button onClick={() => handleEditReport(idx, report)}>EDIT</button>
+              <button className="button-delete" onClick={() => handleDeleteReport(idx)}>DELETE</button>
+              <button className="button-edit" onClick={() => handleEditReport(idx, report)}>EDIT</button>
             </li>
           ))}
         </ul>

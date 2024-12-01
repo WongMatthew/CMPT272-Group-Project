@@ -33,12 +33,30 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       newErrors.locationName = "Location Name is required.";
     if (!reporterName.trim())
       newErrors.reporterName = "Reporter Name is required.";
-    if (!reporterPhone.trim() || !phoneRegex.test(reporterPhone)) {
+    if (!reporterPhone.trim() || !phoneRegex.test(reporterPhone))
       newErrors.reporterPhone =
         "Reporter Phone is required and must follow the format 123-456-7890.";
-    }
     if (!emergencyInfo.trim())
       newErrors.emergencyInfo = "Emergency Info is required.";
+
+    // Validate coordinates
+    const lat = parseFloat(coords.lat);
+    const lng = parseFloat(coords.lng);
+
+    if (coords.lat && (isNaN(lat) || lat < -90 || lat > 90)) {
+      newErrors.lat = "Latitude must be a number between -90 and 90.";
+    }
+
+    if (coords.lng && (isNaN(lng) || lng < -180 || lng > 180)) {
+      newErrors.lng = "Longitude must be a number between -180 and 180.";
+    }
+
+    if ((coords.lat && !coords.lng) || (!coords.lat && coords.lng)) {
+      if (!coords.lat)
+        newErrors.lat = "Latitude is required if Longitude is filled.";
+      if (!coords.lng)
+        newErrors.lng = "Longitude is required if Latitude is filled.";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -138,6 +156,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               }))
             }
           />
+          <small className="error">{errors.lat || " "}</small>
         </div>
         <div>
           <label>Longitude (optional):</label>
@@ -151,7 +170,9 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               }))
             }
           />
+          <small className="error">{errors.lng || " "}</small>
         </div>
+
         <button onClick={handleSubmit}>Submit</button>
         <button onClick={onClose}>Cancel</button>
       </div>

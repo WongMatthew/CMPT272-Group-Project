@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CryptoJS from 'crypto-js'; 
 
-const PasscodeModal = ({isOpen, onClose, onVerified}) => {
+const PasscodeModal = ({isOpen, onClose, onVerified, initData}) => {
   const [storedHash, setStoredHash] = useState('');
   const [inputPasscode, setInputPasscode] = useState('');
   const [isVerified, setIsVerified] = useState(null);
   const [closeBtnText, setCloseBtnText] = useState("Cancel");
   
+  useEffect(() => {
+    if (initData) {
+      console.log("reset modal called");
+      setInputPasscode(initData?.passcode||"");
+      setIsVerified(null);
+      setCloseBtnText("Cancel");
+    }
+  }, [isOpen, initData]);
+
   // Hashes a passcode using MD5
   const hashPasscode = (passcode) => {
     return CryptoJS.MD5(passcode).toString();
@@ -48,6 +57,7 @@ const PasscodeModal = ({isOpen, onClose, onVerified}) => {
           <label>Passcode: </label>
           <input
             type="password"
+            value={inputPasscode}
             // placeholder="Enter passcode"
             onChange={(e) => setInputPasscode(e.target.value)}
           />

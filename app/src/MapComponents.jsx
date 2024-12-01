@@ -38,6 +38,7 @@ const MapComponent = () => {
   const markerRefs = useRef({}); // Reference to marker popups
   const [isPasscodeModalOpen, setIsPasscodeModalOpen] = useState(false); // Controls passcode modal visibility
   const [reportToDelete, setReportToDelete] = useState(null);
+  const [initialPasscode, setInitialPasscode] = useState(null);
 
   const generateTimestamp = () => {
     const now = new Date();
@@ -120,10 +121,10 @@ const MapComponent = () => {
   };
   
   const handleDeleteReport = (idx) => {
+    setInitialPasscode({pass: ""});
     setIsPasscodeModalOpen(true);
     setReportToDelete(idx);
     setIsModalOpen(false);
-
   };
   
   const deleteReport = () => {
@@ -271,6 +272,7 @@ const MapComponent = () => {
             setReportToDelete(null);
           }}
           onVerified={() => deleteReport()}
+          initData={initialPasscode}
         />
       </div>
     </div>

@@ -1,5 +1,23 @@
 import React, { useState, useEffect } from "react";
 
+async function geocodeAddress(address) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+    address
+  )}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+    } else {
+      throw new Error("No results found for the given address.");
+    }
+  } catch (error) {
+    console.error("Error fetching geocoding data:", error);
+    return null;
+  }
+}
+
 const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => {
   const [locationName, setLocationName] = useState("");
   const [reporterName, setReporterName] = useState("");
@@ -75,18 +93,27 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => 
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateFields()) return;
 
     const lat = parseFloat(coords.lat);
     const lng = parseFloat(coords.lng);
-    const validCoords =
+    let finalCoords = null;
+
+    // Uses manual coords if they're provided
+    if (
       !isNaN(lat) &&
       !isNaN(lng) &&
       lat >= -90 &&
       lat <= 90 &&
       lng >= -180 &&
-      lng <= 180;
+      lng <= 180
+    ) {
+      finalCoords = { lat, lng };
+    } else {
+        // Geocode the location name if coords haven't been provided
+        finalCoords = await geocodeAddress(locationName);
+    }
 
     onSubmit({
       locationName,
@@ -95,7 +122,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => 
       emergencyInfo,
       imageUrl: imageUrl || null,
       comments: comments || "No additional comments",
-      coords: validCoords ? [lat, lng] : null,
+      coords: finalCoords ? [finalCoords.lat, finalCoords.lng] : null,
     });
 
     onClose();
@@ -135,7 +162,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => 
           <small className="error">{errors.reporterPhone || " "}</small>
         </div>
         <div>
-          <label>Emergency Info:*</label>
+          <label>Emergency Info (ie. fire, assault, robbery, etc):*</label>
           <textarea
             value={emergencyInfo}
             onChange={(e) => setEmergencyInfo(e.target.value)}
@@ -151,7 +178,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => 
           />
         </div>
         <div>
-          <label>Additional Comments:</label>
+          <label>Additional Comments (ie. context, situation details):</label>
           <textarea
             value={comments}
             onChange={(e) => setComments(e.target.value)}

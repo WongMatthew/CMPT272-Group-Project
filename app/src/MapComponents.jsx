@@ -547,6 +547,7 @@ const MapComponent = () => {
               {!report.coords && <p>(No coordinates provided)</p>}
               <br />
               <button onClick={() => handleDeleteReport(idx)}>DELETE</button>
+              <button onClick={() => handleEditReport(idx)}>EDIT</button>
             </li>
           ))}
         </ul>

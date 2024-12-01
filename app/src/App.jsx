@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <h1>Emergency Reports Map</h1>
+      {/* <h1>Emergency Reports Map</h1> */}
       <MapComponents></MapComponents>
     </div>
   );

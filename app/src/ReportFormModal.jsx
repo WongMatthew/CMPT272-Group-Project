@@ -9,30 +9,61 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [comments, setComments] = useState("");
   const [coords, setCoords] = useState({ lat: "", lng: "" });
 
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     if (initialData) {
-      setLocationName(initialData.locationName || "");
-      setReporterName(initialData.reporterName || "");
-      setReporterPhone(initialData.reporterPhone || "");
-      setEmergencyInfo(initialData.emergencyInfo || "");
-      setImageUrl(initialData.imageUrl || "");
-      setComments(initialData.comments || "");
-      setCoords(initialData.coords || { lat: "", lng: "" });
+      setLocationName(initialData?.locationName || "");
+      setReporterName(initialData?.reporterName || "");
+      setReporterPhone(initialData?.reporterPhone || "");
+      setEmergencyInfo(initialData?.emergencyInfo || "");
+      setImageUrl(initialData?.imageUrl || "");
+      setComments(initialData?.comments || "");
+      setCoords(initialData?.coords || { lat: "", lng: "" });
+      setErrors({});
     }
-  }, [initialData]);
+  }, [isOpen, initialData]);
 
   const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 
-  const handleSubmit = () => {
-    if (
-      !locationName ||
-      !reporterName ||
-      !phoneRegex.test(reporterPhone) ||
-      !emergencyInfo
-    ) {
-      alert("Please fill in all required fields with valid data.");
-      return;
+  const validateFields = () => {
+    const newErrors = {};
+
+    if (!locationName.trim())
+      newErrors.locationName = "Location Name is required.";
+    if (!reporterName.trim())
+      newErrors.reporterName = "Reporter Name is required.";
+    if (!reporterPhone.trim() || !phoneRegex.test(reporterPhone))
+      newErrors.reporterPhone =
+        "Reporter Phone is required and must follow the format 123-456-7890.";
+    if (!emergencyInfo.trim())
+      newErrors.emergencyInfo = "Emergency Info is required.";
+
+    // Validate coordinates
+    const lat = parseFloat(coords.lat);
+    const lng = parseFloat(coords.lng);
+
+    if (coords.lat && (isNaN(lat) || lat < -90 || lat > 90)) {
+      newErrors.lat = "Latitude must be a number between -90 and 90.";
     }
+
+    if (coords.lng && (isNaN(lng) || lng < -180 || lng > 180)) {
+      newErrors.lng = "Longitude must be a number between -180 and 180.";
+    }
+
+    if ((coords.lat && !coords.lng) || (!coords.lat && coords.lng)) {
+      if (!coords.lat)
+        newErrors.lat = "Latitude is required if Longitude is filled.";
+      if (!coords.lng)
+        newErrors.lng = "Longitude is required if Latitude is filled.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validateFields()) return;
 
     const lat = parseFloat(coords.lat);
     const lng = parseFloat(coords.lng);
@@ -54,50 +85,49 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       coords: validCoords ? [lat, lng] : null,
     });
 
-    onClose(); // Close modal after submission
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
+    <div className="modal create-report-modal">
       <div className="modal-content">
         <h2>Report an Emergency</h2>
         <div>
-          <label>Location Name:</label>
+          <label>Location Name *:</label>
           <input
             type="text"
             value={locationName}
             onChange={(e) => setLocationName(e.target.value)}
-            required
           />
+          <small className="error">{errors.locationName || " "}</small>
         </div>
         <div>
-          <label>Reporter Name:</label>
+          <label>Reporter Name *:</label>
           <input
             type="text"
             value={reporterName}
             onChange={(e) => setReporterName(e.target.value)}
-            required
           />
+          <small className="error">{errors.reporterName || " "}</small>
         </div>
         <div>
-          <label>Reporter Phone (format: 123-456-7890):</label>
+          <label>Reporter Phone * (format: 123-456-7890):</label>
           <input
             type="text"
             value={reporterPhone}
             onChange={(e) => setReporterPhone(e.target.value)}
-            required
           />
+          <small className="error">{errors.reporterPhone || " "}</small>
         </div>
         <div>
-          <label>Emergency Info:</label>
-          <input
-            type="text"
+          <label>Emergency Info *:</label>
+          <textarea
             value={emergencyInfo}
             onChange={(e) => setEmergencyInfo(e.target.value)}
-            required
           />
+          <small className="error">{errors.emergencyInfo || " "}</small>
         </div>
         <div>
           <label>Image URL (optional):</label>
@@ -126,6 +156,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               }))
             }
           />
+          <small className="error">{errors.lat || " "}</small>
         </div>
         <div>
           <label>Longitude (optional):</label>
@@ -139,7 +170,9 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               }))
             }
           />
+          <small className="error">{errors.lng || " "}</small>
         </div>
+
         <button onClick={handleSubmit}>Submit</button>
         <button onClick={onClose}>Cancel</button>
       </div>

@@ -21,9 +21,6 @@ const PasscodeModal = ({isOpen, onClose, onVerified}) => {
 
   // Verifies if the provided passcode matches the stored hash
   const verifyPasscode = (providedPasscode) => {
-    /* if (!storedHash) {
-      storePasscode("passcode");
-    } */
     const hash = hashPasscode(providedPasscode);
     setIsVerified(hash === "15472cd29f632e34f039403f2e635f66"); // hash for 'passcode'
     if (hash === "15472cd29f632e34f039403f2e635f66") {
@@ -36,6 +33,7 @@ const PasscodeModal = ({isOpen, onClose, onVerified}) => {
     onClose();
     setIsVerified(null);
     setCloseBtnText("Cancel");
+    setInputPasscode("");
   }
   
   if (!isOpen) {

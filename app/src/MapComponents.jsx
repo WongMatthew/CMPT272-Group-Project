@@ -354,6 +354,7 @@ const MapComponent = () => {
       coords: { lat: "", lng: "" },
     });
     setIsModalOpen(true); // Open modal
+    setIsPasscodeModalOpen(false);
   };
 
   const handleReportSubmit = (report) => {
@@ -417,13 +418,13 @@ const MapComponent = () => {
   const handleDeleteReport = (idx) => {
     setIsPasscodeModalOpen(true);
     setReportToDelete(idx);
-    console.log("on report " + idx);
+    setIsModalOpen(false);
+
   };
   
   const deleteReport = () => {
     const newReportList = reports.filter((report, idx) => idx !== reportToDelete)
     setReports(newReportList);
-    setReportToDelete(null);
   }
 
   return (
@@ -503,13 +504,12 @@ const MapComponent = () => {
           Add Report
         </button>
 
-        <button
+        {/* <button
           onClick={() => setIsPasscodeModalOpen(true)}
           className="add-report-button"
         >
           test passcode
-        </button>
-
+        </button> */}
 
         <ReportFormModal
           isOpen={isModalOpen}
@@ -562,7 +562,10 @@ const MapComponent = () => {
         </ul>
         <PasscodeModal 
           isOpen = {isPasscodeModalOpen}
-          onClose={() => setIsPasscodeModalOpen(false)}
+          onClose={() => {
+            setIsPasscodeModalOpen(false);
+            setReportToDelete(null);
+          }}
           onVerified={() => deleteReport()}
         />
       </div>

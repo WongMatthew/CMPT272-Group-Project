@@ -10,7 +10,7 @@ const PasscodeModal = ({isOpen, onClose, onVerified, initData}) => {
   useEffect(() => {
     if (initData) {
       console.log("reset modal called");
-      setInputPasscode(initData?.passcode||"");
+      setInputPasscode(initData?.passcode || "");
       setIsVerified(null);
       setCloseBtnText("Cancel");
     }

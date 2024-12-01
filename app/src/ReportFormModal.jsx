@@ -98,12 +98,8 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     ) {
       finalCoords = { lat, lng };
     } else {
-      // Geocode the location name if coords haven't been provided
-      finalCoords = await geocodeAddress(locationName);
-      if (!finalCoords) {
-        alert("Unable to fetch coordinates for the given location name.");
-        return;
-      }
+        // Geocode the location name if coords haven't been provided
+        finalCoords = await geocodeAddress(locationName);
     }
 
     onSubmit({

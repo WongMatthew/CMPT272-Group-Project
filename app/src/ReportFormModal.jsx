@@ -91,7 +91,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
+    <div className="modal create-report-modal">
       <div className="modal-content">
         <h2>Report an Emergency</h2>
         <div>

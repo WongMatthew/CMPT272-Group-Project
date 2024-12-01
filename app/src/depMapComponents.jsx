@@ -10,7 +10,6 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import ReportFormModal from "./ReportFormModal";
-import PasscodeModal from "./PasscodeModal";
 
 // Fixing Leaflet's default icon paths for React
 import markerIcon from "./locationPin.png";
@@ -33,11 +32,7 @@ const MapComponent = () => {
   const [mapBounds, setMapBounds] = useState(null);
   const [sortBy, setSortBy] = useState("timestamp");
   const [highlightedReport, setHighlightedReport] = useState(null); // Tracks highlighted report
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
-  const [initialReportData, setInitialReportData] = useState(null); // Resets modal data
   const markerRefs = useRef({}); // Reference to marker popups
-  const [isPasscodeModalOpen, setIsPasscodeModalOpen] = useState(false); // Controls passcode modal visibility
-  const [reportToDelete, setReportToDelete] = useState(null);
 
   const generateTimestamp = () => {
     const now = new Date();
@@ -48,28 +43,88 @@ const MapComponent = () => {
   };
 
   const handleAddReport = () => {
-    setInitialReportData({
-      locationName: "",
-      reporterName: "",
-      reporterPhone: "",
-      emergencyInfo: "",
-      imageUrl: "",
-      comments: "",
-      coords: { lat: "", lng: "" },
-    });
-    setIsModalOpen(true); // Open modal
-  };
+    let locationName = "";
+    while (!locationName) {
+      locationName = prompt("Enter a name for this location:", "New Location");
+      if (!locationName) alert("Location name is required.");
+    }
 
-  const handleReportSubmit = (report) => {
+    let reporterName = "";
+    while (!reporterName) {
+      reporterName = prompt("Enter the reporting person’s name:", "");
+      if (!reporterName) alert("Reporter name is required.");
+    }
+
+    let reporterPhone = "";
+    const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
+    while (!reporterPhone || !phoneRegex.test(reporterPhone)) {
+      reporterPhone = prompt(
+        "Enter the reporting person’s phone number (format: 123-456-7890):",
+        ""
+      );
+      if (!reporterPhone || !phoneRegex.test(reporterPhone)) {
+        alert("A valid phone number in the format 123-456-7890 is required.");
+      }
+    }
+
+    let emergencyInfo = "";
+    while (!emergencyInfo) {
+      emergencyInfo = prompt(
+        "Enter the nature of the emergency (e.g., fire, shooting, etc.):",
+        "General"
+      );
+      if (!emergencyInfo) alert("Emergency information is required.");
+    }
+
+    const imageUrl =
+      prompt("Enter an image URL for this location (optional):", "") || null;
+    const comments =
+      prompt("Enter additional comments or details (optional):", "") ||
+      "No additional comments";
+
+    const addCoordinates = confirm(
+      "Do you want to add latitude and longitude for this report?"
+    );
+    let coords = null;
+
+    if (addCoordinates) {
+      const latInput = prompt("Enter latitude (e.g., 49.2827):", "");
+      const lngInput = prompt("Enter longitude (e.g., -123.1207):", "");
+
+      // Validate inputs
+      const lat = parseFloat(latInput);
+      const lng = parseFloat(lngInput);
+
+      if (
+        !isNaN(lat) &&
+        !isNaN(lng) &&
+        lat >= -90 &&
+        lat <= 90 &&
+        lng >= -180 &&
+        lng <= 180
+      ) {
+        coords = [lat, lng];
+      } else {
+        alert(
+          "Invalid coordinates entered. Coordinates must be valid numbers within latitude (-90 to 90) and longitude (-180 to 180) ranges. The report will be added without a pin."
+        );
+      }
+    }
+
     setReports((prevReports) => [
       ...prevReports,
       {
-        ...report,
+        coords,
+        locationName,
+        imageUrl,
+        reporterName,
+        reporterPhone,
+        emergencyInfo,
+        comments,
         timestamp: generateTimestamp(),
         status: "OPEN",
       },
     ]);
-    setIsModalOpen(false); // Close the modal after submission
   };
 
   const UpdateMapBounds = () => {
@@ -117,18 +172,6 @@ const MapComponent = () => {
       alert("This report does not have associated coordinates.");
     }
   };
-  
-  const handleDeleteReport = (idx) => {
-    setIsPasscodeModalOpen(true);
-    setReportToDelete(idx);
-    console.log("on report " + idx);
-  };
-  
-  const deleteReport = () => {
-    const newReportList = reports.filter((report, idx) => idx !== reportToDelete)
-    setReports(newReportList);
-    setReportToDelete(null);
-  }
 
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
@@ -207,21 +250,6 @@ const MapComponent = () => {
           Add Report
         </button>
 
-        <button
-          onClick={() => setIsPasscodeModalOpen(true)}
-          className="add-report-button"
-        >
-          test passcode
-        </button>
-
-
-        <ReportFormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleReportSubmit}
-          initialData={initialReportData}
-        />
-
         <br />
         <div className="sort-buttons">
           <button onClick={() => handleSort("timestamp")}>Sort by Time</button>
@@ -258,20 +286,10 @@ const MapComponent = () => {
               <br />
               <b>Status:</b> {report.status}
               {!report.coords && <p>(No coordinates provided)</p>}
-              <br />
-              <button onClick={() => handleDeleteReport(idx)}>DELETE</button>
-              <button onClick={() => handleEditReport(idx)}>EDIT</button>
             </li>
           ))}
         </ul>
-        <PasscodeModal 
-          isOpen = {isPasscodeModalOpen}
-          onClose={() => setIsPasscodeModalOpen(false)}
-          onVerified={() => deleteReport()}
-        />
       </div>
     </div>
   );
 };
-
-export default MapComponent;

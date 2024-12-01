@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
+const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData, isEdit }) => {
   const [locationName, setLocationName] = useState("");
   const [reporterName, setReporterName] = useState("");
   const [reporterPhone, setReporterPhone] = useState("");
@@ -8,6 +8,8 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   const [imageUrl, setImageUrl] = useState("");
   const [comments, setComments] = useState("");
   const [coords, setCoords] = useState({ lat: "", lng: "" });
+  const [header, setHeader] = useState("Report an Emergency");
+  const [submitBtnText, setSubmitBtnText] = useState("Submit");
 
   const [errors, setErrors] = useState({});
 
@@ -23,6 +25,17 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       setErrors({});
     }
   }, [isOpen, initialData]);
+
+  useEffect(() => {
+    if (isEdit) {
+      setHeader("Edit Emergency");
+      setSubmitBtnText("Confirm Changes");
+    }
+    else {
+      setHeader("Report an Emergency");
+      setSubmitBtnText("Submit");
+    }
+  }, [isEdit]);
 
   const phoneRegex = /^\d{3}-\d{3}-\d{4}$/;
 
@@ -93,7 +106,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   return (
     <div className="modal create-report-modal">
       <div className="modal-content">
-        <h2>Report an Emergency</h2>
+        <h2>{header}</h2>
         <div>
           <label>Location Name:*</label>
           <input
@@ -173,7 +186,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.lng || " "}</small>
         </div>
 
-        <button onClick={handleSubmit}>Submit</button>
+        <button onClick={handleSubmit}>{submitBtnText}</button>
         <button onClick={onClose}>Cancel</button>
       </div>
     </div>

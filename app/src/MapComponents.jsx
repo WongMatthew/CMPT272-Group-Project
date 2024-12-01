@@ -35,6 +35,8 @@ const MapComponent = () => {
   const [highlightedReport, setHighlightedReport] = useState(null); // Tracks highlighted report
   const [isModalOpen, setIsModalOpen] = useState(false); // Controls modal visibility
   const [initialReportData, setInitialReportData] = useState(null); // Resets modal data
+  const [isModalEdit, setIsModalEdit] = useState(false);
+  const [reportToEdit, setReportToEdit] = useState(null);
   const markerRefs = useRef({}); // Reference to marker popups
   const [isPasscodeModalOpen, setIsPasscodeModalOpen] = useState(false); // Controls passcode modal visibility
   const [reportToDelete, setReportToDelete] = useState(null);
@@ -60,17 +62,38 @@ const MapComponent = () => {
     });
     setIsModalOpen(true); // Open modal
     setIsPasscodeModalOpen(false);
+    setIsModalEdit(false);
   };
 
   const handleReportSubmit = (report) => {
-    setReports((prevReports) => [
-      ...prevReports,
-      {
+    if (isModalEdit) {
+      console.log("editting");
+      const updatedReports = reports.slice();
+
+      if (!reports) {
+        return;
+      }
+
+      const idx = reportToEdit;
+      updatedReports[idx] = {
+        ...updatedReports[idx],
         ...report,
-        timestamp: generateTimestamp(),
-        status: "OPEN",
-      },
-    ]);
+      };
+      console.log(updatedReports[idx]);
+      setReports(updatedReports);
+
+      setReportToEdit(null);
+    }
+    else {
+      setReports((prevReports) => [
+        ...prevReports,
+        {
+          ...report,
+          timestamp: generateTimestamp(),
+          status: "OPEN",
+        },
+      ]);
+    }
     setIsModalOpen(false); // Close the modal after submission
   };
 
@@ -132,6 +155,22 @@ const MapComponent = () => {
     setReports(newReportList);
   }
 
+  const handleEditReport = (idx, report) => {
+    setInitialReportData({
+      locationName: report.locationName,
+      reporterName: report.reporterName,
+      reporterPhone: report.reporterPhone,
+      emergencyInfo: report.emergencyInfo,
+      imageUrl: report.imageUrl,
+      comments: report.comments,
+      coords: { lat: report.coords[0], lng: report.coords[1]},
+    });
+    setReportToEdit(idx);
+    setIsModalOpen(true);
+    setIsPasscodeModalOpen(false);
+    setIsModalEdit(true);
+  }
+  
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
       {/* Map */}
@@ -221,6 +260,7 @@ const MapComponent = () => {
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleReportSubmit}
           initialData={initialReportData}
+          isEdit={isModalEdit}
         />
 
         <br />
@@ -261,7 +301,7 @@ const MapComponent = () => {
               {!report.coords && <p>(No coordinates provided)</p>}
               <br />
               <button onClick={() => handleDeleteReport(idx)}>DELETE</button>
-              <button onClick={() => handleEditReport(idx)}>EDIT</button>
+              <button onClick={() => handleEditReport(idx, report)}>EDIT</button>
             </li>
           ))}
         </ul>

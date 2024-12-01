@@ -552,6 +552,7 @@ const MapComponent = () => {
         </ul>
         <PasscodeModal 
           isOpen = {isPasscodeModalOpen}
+          onClose={() => setIsPasscodeModalOpen(false)}
         />
       </div>
     </div>

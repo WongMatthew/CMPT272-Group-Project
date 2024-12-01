@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CryptoJS from 'crypto-js'; 
 
-const PasscodeModal = ({isOpen}) => {
+const PasscodeModal = ({isOpen, onClose}) => {
   const [storedHash, setStoredHash] = useState('');
   const [inputPasscode, setInputPasscode] = useState('');
   const [isVerified, setIsVerified] = useState(null);
@@ -55,7 +55,7 @@ const PasscodeModal = ({isOpen}) => {
         <button onClick={() => verifyPasscode(inputPasscode)}>
           Verify Passcode
         </button>
-        <button >
+        <button onClick={onClose}>
           Cancel
         </button>
       </div>

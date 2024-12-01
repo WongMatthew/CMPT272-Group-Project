@@ -95,7 +95,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
       <div className="modal-content">
         <h2>Report an Emergency</h2>
         <div>
-          <label>Location Name *:</label>
+          <label>Location Name:*</label>
           <input
             type="text"
             value={locationName}
@@ -104,7 +104,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.locationName || " "}</small>
         </div>
         <div>
-          <label>Reporter Name *:</label>
+          <label>Reporter Name:*</label>
           <input
             type="text"
             value={reporterName}
@@ -113,7 +113,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.reporterName || " "}</small>
         </div>
         <div>
-          <label>Reporter Phone * (format: 123-456-7890):</label>
+          <label>Reporter Phone (format: 123-456-7890):*</label>
           <input
             type="text"
             value={reporterPhone}
@@ -122,7 +122,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.reporterPhone || " "}</small>
         </div>
         <div>
-          <label>Emergency Info *:</label>
+          <label>Emergency Info:*</label>
           <textarea
             value={emergencyInfo}
             onChange={(e) => setEmergencyInfo(e.target.value)}
@@ -130,7 +130,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.emergencyInfo || " "}</small>
         </div>
         <div>
-          <label>Image URL (optional):</label>
+          <label>Image URL:</label>
           <input
             type="text"
             value={imageUrl}
@@ -138,14 +138,14 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           />
         </div>
         <div>
-          <label>Additional Comments (optional):</label>
+          <label>Additional Comments:</label>
           <textarea
             value={comments}
             onChange={(e) => setComments(e.target.value)}
           />
         </div>
         <div>
-          <label>Latitude (optional):</label>
+          <label>Latitude:</label>
           <input
             type="text"
             value={coords.lat}
@@ -159,7 +159,7 @@ const ReportFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
           <small className="error">{errors.lat || " "}</small>
         </div>
         <div>
-          <label>Longitude (optional):</label>
+          <label>Longitude:</label>
           <input
             type="text"
             value={coords.lng}
